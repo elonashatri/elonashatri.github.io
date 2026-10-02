@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Unlisted pages — keep out of search engines
+Disallow: /elona-michael-wedding.html
