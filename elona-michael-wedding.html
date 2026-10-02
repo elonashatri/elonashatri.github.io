@@ -75,10 +75,42 @@
       border-bottom: 1px solid rgba(255,255,255,0.12);
     }
     .topbar .mono { font-family: 'Fraunces', serif; font-size: 1.15rem; letter-spacing: 0.04em; color: #f4efe3; border: none; }
-    .topbar nav { display: flex; gap: 26px; }
+    .topbar nav { display: flex; gap: 26px; align-items: center; }
     .topbar nav a { border: none; font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: #bcd0bf; }
     .topbar nav a:hover { color: #e9b949; }
-    @media (max-width: 680px) { .topbar nav { display: none; } }
+    /* RSVP highlighted in the nav */
+    .topbar nav a.nav-rsvp { color: #16130f; background: #e9b949; padding: 9px 16px; border-radius: 999px; }
+    .topbar nav a.nav-rsvp:hover { background: #f3d089; color: #16130f; }
+
+    /* hamburger button (hidden on desktop) */
+    .menu-btn {
+      display: none; border: none; background: transparent; cursor: pointer;
+      width: 40px; height: 40px; padding: 8px; color: #f4efe3;
+    }
+    .menu-btn span { display: block; height: 2px; background: currentColor; margin: 5px 0; transition: transform 0.3s ease, opacity 0.3s ease; }
+    .menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .menu-btn.open span:nth-child(2) { opacity: 0; }
+    .menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* full-screen mobile menu */
+    .mobile-menu {
+      position: fixed; inset: 0; z-index: 19;
+      background: rgba(16,38,28,0.98); backdrop-filter: blur(6px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+      opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .mobile-menu.open { opacity: 1; visibility: visible; }
+    .mobile-menu a {
+      border: none; color: #f1e9db; font-family: 'Fraunces', serif; font-weight: 300;
+      font-size: 1.8rem; letter-spacing: 0.02em; padding: 10px 20px;
+    }
+    .mobile-menu a.m-rsvp { margin-top: 14px; background: #e9b949; color: #16130f; border-radius: 999px; font-family: 'Jost', sans-serif; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.18em; padding: 14px 40px; }
+
+    @media (max-width: 680px) {
+      .topbar nav { display: none; }
+      .menu-btn { display: block; }
+    }
+    body.menu-lock { overflow: hidden; }
 
     /* ---------- Hero (photo banner) ---------- */
     .hero {
@@ -116,7 +148,16 @@
       font-size: 1.15rem; color: #f0ece2; font-weight: 300;
       text-shadow: 0 1px 16px rgba(0,0,0,0.55);
     }
-    .hero .scroll-cue { margin-top: 30px; font-size: 0.62rem; letter-spacing: 0.34em; text-transform: uppercase; color: #e9e3d6; opacity: 0.85; }
+    .hero .hero-cta { margin-top: 32px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .hero .hero-cta a {
+      border: none; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.72rem;
+      padding: 15px 34px; border-radius: 999px; transition: all 0.25s ease;
+    }
+    .hero .hero-cta .cta-rsvp { background: #e9b949; color: #16130f; }
+    .hero .hero-cta .cta-rsvp:hover { background: #f3d089; }
+    .hero .hero-cta .cta-ghost { border: 1px solid rgba(255,255,255,0.65); color: #fdfaf3; }
+    .hero .hero-cta .cta-ghost:hover { background: rgba(255,255,255,0.15); }
+    .hero .scroll-cue { margin-top: 26px; font-size: 0.62rem; letter-spacing: 0.34em; text-transform: uppercase; color: #e9e3d6; opacity: 0.85; }
 
     /* ---------- Facts strip: WHEN / WHERE / ATTIRE ---------- */
     .facts {
@@ -135,7 +176,7 @@
     }
 
     /* ---------- Generic section ---------- */
-    section.block { padding: 100px 0; }
+    section.block { padding: 100px 0; scroll-margin-top: 70px; }
 
     .eyebrow { text-transform: uppercase; letter-spacing: 0.3em; font-size: 0.68rem; color: var(--accent); margin: 0 0 14px; }
     .sec-title { font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 1.05; margin: 0 0 8px; }
@@ -321,8 +362,20 @@
       <a href="#travel">Travel</a>
       <a href="#todo">Things to Do</a>
       <a href="#story">Our Story</a>
-      <a href="#rsvp">RSVP</a>
+      <a href="#rsvp" class="nav-rsvp">RSVP</a>
     </nav>
+    <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- ===================== MOBILE MENU ===================== -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#details">Details</a>
+    <a href="#travel">Travel</a>
+    <a href="#todo">Things to Do</a>
+    <a href="#story">Our Story</a>
+    <a href="#rsvp" class="m-rsvp">RSVP</a>
   </div>
 
   <!-- ===================== HERO ===================== -->
@@ -339,6 +392,10 @@
         We're celebrating our marriage, and we'd love for you to be there. Join us in Prishtina,
         Kosovo, on the 10th of April 2027 for an evening of dinner, dancing and a lot of joy.
       </p>
+      <div class="hero-cta">
+        <a href="#rsvp" class="cta-rsvp">RSVP</a>
+        <a href="#details" class="cta-ghost">View details</a>
+      </div>
       <p class="scroll-cue">Scroll ↓</p>
     </div>
   </header>
@@ -634,6 +691,27 @@
       }
       tick();
       setInterval(tick, 1000);
+    })();
+
+    // ---------- Mobile menu toggle ----------
+    (function () {
+      var btn = document.getElementById('menu-btn');
+      var menu = document.getElementById('mobile-menu');
+      if (!btn || !menu) return;
+      function setOpen(open) {
+        btn.classList.toggle('open', open);
+        menu.classList.toggle('open', open);
+        document.body.classList.toggle('menu-lock', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      }
+      btn.addEventListener('click', function () { setOpen(!menu.classList.contains('open')); });
+      // close when a link is tapped
+      menu.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () { setOpen(false); });
+      });
+      // close on Escape
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
     })();
 
     // ---------- Flag-hearts flourish (reveal on scroll) ----------
